@@ -27,6 +27,8 @@ telescopeMatch <- function(outcome, outcome.formula, treatment, mediator, pre.tr
   fs.0 = Match(Y = data[[outcome]][data[[treatment]] == 0], Tr = data[[mediator]][data[[treatment]] == 0],
                X = data[data[[treatment]] == 0,][,all.covariates], M=K.fs, BiasAdjust = BiasCorrect)
 
+  fs.1.save <- fs.1
+  fs.0.save <- fs.0
 
   ### Impute the outcome using each match set using the bias-correction
   data$YM0 = NA
@@ -48,6 +50,8 @@ telescopeMatch <- function(outcome, outcome.formula, treatment, mediator, pre.tr
   ss <- Match(Y = data$YM0, Tr = data[[treatment]], X= data[,pre.treatment], M = K.ss, BiasAdjust = BiasCorrect)
   estimate <- ss$est
 
+  ss.save <- ss
+  
   if(nBoot > 1){
     boot.ests <- rep(NA, nBoot)
     for (boot in 1:nBoot){
@@ -115,6 +119,6 @@ telescopeMatch <- function(outcome, outcome.formula, treatment, mediator, pre.tr
   }
 
   ### Return Match object from the second stage
-  return(results = list(est = estimate, se = standardError, boot = boot.ests, stage2match = ss, stage1match0 = fs.1, stage1match1 = fs.0))
+  return(results = list(est = estimate, se = standardError, boot = boot.ests, stage2match = ss.save, stage1match0 = fs.1.save, stage1match1 = fs.0.save))
 
 }
